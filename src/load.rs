@@ -17,7 +17,10 @@ pub fn handle_loaded_map_system(
     mut ev_asset: EventReader<AssetEvent<MapAsset>>,
     mut q_maps: Query<Entity, With<Map>>,
     mut post_build_event: EventWriter<PostBuildMapEvent>,
+    app_type_registry: Res<AppTypeRegistry>,
 ) {
+    let type_registry = app_type_registry.read();
+
     for ev in ev_asset.read() {
         match ev {
             AssetEvent::LoadedWithDependencies { id } => {
@@ -30,6 +33,7 @@ pub fn handle_loaded_map_system(
                         &mut meshes,
                         &mut commands,
                         &mut post_build_event,
+                        &*type_registry,
                     );
                 }
             }
