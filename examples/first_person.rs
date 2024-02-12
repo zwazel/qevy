@@ -3,7 +3,7 @@ use bevy::window::PrimaryWindow;
 use bevy::{input::mouse::MouseMotion, window::CursorGrabMode};
 use bevy_xpbd_3d::prelude::*;
 
-use qevy::{components::MapEntityProperties, PostBuildMapEvent};
+use qevy::PostBuildMapEvent;
 
 const MOVE_SPEED: f32 = 2.0;
 const MOUSE_SENSITIVITY: f32 = 0.1;

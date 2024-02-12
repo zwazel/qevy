@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::render::mesh::Indices;
 use bevy::render::render_resource::PrimitiveTopology;
-use shambler::entity;
+
 use std::collections::BTreeMap;
 
 use crate::components::*;
