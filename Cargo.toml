@@ -13,13 +13,12 @@ authors = ["Brian Howard <brian.howard@hey.com>"]
 [dependencies]
 anyhow = "1.0.75"
 async-lock = "3.0.0"
-bevy = { version = "0.12" }
+bevy = "0.12"
 regex = "1.10.2"
 ron = "0.8.1"
 thiserror = "1.0.50"
 usage = "1.4.0"
 
-serde = "1.0.188"
 shalrath = "0.2.5"
 shambler = { git = "https://github.com/BrianWiz/shambler.git" }
 bevy_xpbd_3d = { version = "0.3.2", optional = true }

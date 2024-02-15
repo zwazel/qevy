@@ -1,10 +1,6 @@
 use bevy::prelude::*;
-use bevy::reflect::serde::UntypedReflectDeserializer;
-use bevy::reflect::TypeRegistry;
 use bevy::render::mesh::Indices;
 use bevy::render::render_resource::PrimitiveTopology;
-use core::ops::Deref;
-use serde::de::DeserializeSeed;
 
 use std::collections::BTreeMap;
 
@@ -25,7 +21,6 @@ pub fn build_map(
     meshes: &mut Assets<Mesh>,
     commands: &mut Commands,
     ev_post_build_map: &mut EventWriter<PostBuildMapEvent>,
-    type_registry: impl Deref<Target = TypeRegistry>,
 ) {
     let geomap = map_asset.geomap.as_ref().unwrap();
 
@@ -102,10 +97,6 @@ pub fn build_map(
             } else {
                 Quat::IDENTITY
             };
-
-            let mut deserializer = ron::Deserializer::from_str("").unwrap();
-            let reflect_deserializer = UntypedReflectDeserializer::new(&type_registry);
-            println!("classname: {}", classname);
 
             commands.entity(map_entity).with_children(|children| {
                 let mut entity = children.spawn((MapEntityProperties {
