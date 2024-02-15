@@ -100,15 +100,6 @@ pub struct BrushEntity;
 #[derive(Default, Component)]
 pub struct Brush;
 
-#[derive(Component)]
-pub struct TriggeredOnce;
-
-#[derive(Event)]
-pub struct TriggeredEvent {
-    pub target: String,
-    pub triggered_by: Entity,
-}
-
 #[derive(Default, Component)]
 pub struct TriggerOnce {
     pub target: String,
