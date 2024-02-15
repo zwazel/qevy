@@ -99,21 +99,3 @@ pub struct BrushEntity;
 
 #[derive(Default, Component)]
 pub struct Brush;
-
-#[derive(Default, Component)]
-pub struct TriggerOnce {
-    pub target: String,
-}
-
-#[derive(Default, Component)]
-pub struct TriggerMultiple {
-    pub target: String,
-}
-
-#[derive(Default, Component)]
-pub struct TriggerTarget {
-    pub target_name: String,
-}
-
-#[derive(Default, Component)]
-pub struct TriggerInstigator;

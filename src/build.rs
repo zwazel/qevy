@@ -9,12 +9,6 @@ use crate::conversions::*;
 
 use crate::{MapAsset, PostBuildMapEvent};
 
-#[cfg(feature = "xpbd")]
-use bevy_xpbd_3d::prelude::*;
-
-#[cfg(feature = "rapier")]
-use bevy_rapier3d::prelude::*;
-
 pub fn build_map(
     map_entity: Entity,
     map_asset: &mut MapAsset,
@@ -99,7 +93,7 @@ pub fn build_map(
             };
 
             commands.entity(map_entity).with_children(|children| {
-                let mut entity = children.spawn((MapEntityProperties {
+                children.spawn((MapEntityProperties {
                     classname: classname.to_string(),
                     transform: Transform::from_translation(translation)
                         * Transform::from_rotation(rotation),
@@ -108,12 +102,6 @@ pub fn build_map(
                         .map(|(k, v)| (k.to_string(), v.to_string()))
                         .collect(),
                 },));
-
-                if let Some(target_name) = props.get("targetname") {
-                    entity.insert(TriggerTarget {
-                        target_name: target_name.to_string(),
-                    });
-                }
             });
         });
 
@@ -199,71 +187,15 @@ pub fn build_map(
                     }
 
                     // spawn it's collider
-                    #[cfg(feature = "xpbd")]
+                    if let Some(convex_hull) =
+                        bevy_xpbd_3d::prelude::Collider::convex_hull(brush_vertices)
                     {
-                        if let Some(convex_hull) =
-                            bevy_xpbd_3d::prelude::Collider::convex_hull(brush_vertices)
-                        {
-                            let mut collider =
-                                gchildren.spawn((convex_hull, TransformBundle::default()));
-                            if classname == "trigger_multiple" {
-                                collider.insert((
-                                    TriggerMultiple {
-                                        target: props.get("target").unwrap().to_string(),
-                                    },
-                                    bevy_xpbd_3d::prelude::RigidBody::Dynamic,
-                                    bevy_xpbd_3d::prelude::Sensor,
-                                ));
-                            } else if classname == "trigger_once" {
-                                collider.insert((
-                                    TriggerOnce {
-                                        target: props.get("target").unwrap().to_string(),
-                                    },
-                                    bevy_xpbd_3d::prelude::RigidBody::Dynamic,
-                                    bevy_xpbd_3d::prelude::Sensor,
-                                ));
-                            } else {
-                                collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
-                            }
-                        }
-                    }
-
-                    #[cfg(feature = "rapier")]
-                    {
-                        if let Some(convex_hull) =
-                            bevy_rapier3d::prelude::Collider::convex_hull(&brush_vertices)
-                        {
-                            let mut collider =
-                                gchildren.spawn((convex_hull, TransformBundle::default()));
-                            if classname == "trigger_multiple" {
-                                collider.insert((
-                                    TriggerMultiple {
-                                        target: props.get("target").unwrap().to_string(),
-                                    },
-                                    bevy_rapier3d::prelude::RigidBody::Dynamic,
-                                    bevy_rapier3d::prelude::Sensor,
-                                ));
-                            } else if classname == "trigger_once" {
-                                collider.insert((
-                                    TriggerOnce {
-                                        target: props.get("target").unwrap().to_string(),
-                                    },
-                                    bevy_rapier3d::prelude::RigidBody::Dynamic,
-                                    bevy_rapier3d::prelude::Sensor,
-                                ));
-                            } else {
-                                collider.insert((bevy_rapier3d::prelude::RigidBody::Fixed,));
-                            }
-                        }
+                        let mut collider =
+                            gchildren.spawn((convex_hull, TransformBundle::default()));
+                        collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
                     }
                 }
             });
-
-            if let Some(target_name) = props.get("targetname") {
-                entity.insert(TriggerTarget {
-                    target_name: target_name.to_string(),
-                });
-            }
         });
     }
 
