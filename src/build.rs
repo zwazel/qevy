@@ -190,12 +190,9 @@ pub fn build_map(
                     if let Some(convex_hull) =
                         bevy_xpbd_3d::prelude::Collider::convex_hull(brush_vertices)
                     {
-                        println!("we have a convex hull");
                         let mut collider =
                             gchildren.spawn((convex_hull, TransformBundle::default()));
                         collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
-                    } else {
-                        println!("we don't have a convex hull");
                     }
                 }
             });
