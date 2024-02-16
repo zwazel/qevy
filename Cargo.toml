@@ -22,3 +22,6 @@ usage = "1.4.0"
 shalrath = "0.2.5"
 shambler = { git = "https://github.com/BrianWiz/shambler.git" }
 bevy_xpbd_3d = { version = "0.3.2" }
+
+[[example]]
+name = "first_person"
