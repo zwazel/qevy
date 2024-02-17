@@ -8,9 +8,10 @@ use bevy::render::texture::ImageSamplerDescriptor;
 use bevy::render::texture::ImageType;
 
 use crate::components::Map;
+use crate::CustomPhysicsLayer;
 use crate::{MapAsset, PostBuildMapEvent};
 
-pub fn handle_loaded_map_system(
+pub fn handle_loaded_map_system<L: CustomPhysicsLayer>(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut map_assets: ResMut<Assets<MapAsset>>,
@@ -24,7 +25,7 @@ pub fn handle_loaded_map_system(
                 for map_entity in q_maps.iter_mut() {
                     commands.entity(map_entity).despawn_descendants();
                     let map_asset = map_assets.get_mut(*id).unwrap();
-                    crate::build::build_map(
+                    crate::build::build_map::<L>(
                         map_entity,
                         map_asset,
                         &mut meshes,

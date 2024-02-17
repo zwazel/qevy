@@ -1,15 +1,17 @@
 use bevy::prelude::*;
 use bevy::render::mesh::Indices;
 use bevy::render::render_resource::PrimitiveTopology;
+use bevy_xpbd_3d::components::CollisionLayers;
 
 use std::collections::BTreeMap;
 
 use crate::components::*;
 use crate::conversions::*;
 
+use crate::CustomPhysicsLayer;
 use crate::{MapAsset, PostBuildMapEvent};
 
-pub fn build_map(
+pub fn build_map<L: CustomPhysicsLayer>(
     map_entity: Entity,
     map_asset: &mut MapAsset,
     meshes: &mut Assets<Mesh>,
@@ -190,8 +192,33 @@ pub fn build_map(
                     if let Some(convex_hull) =
                         bevy_xpbd_3d::prelude::Collider::convex_hull(brush_vertices)
                     {
+                        let layers = props
+                            .get("collision_layers")
+                            .and_then(|cl| cl.parse::<u32>().ok())
+                            .map_or_else(Vec::new, |cl| {
+                                decode_flags(cl)
+                                    .iter()
+                                    .map(|flag| L::from_flag(*flag))
+                                    .collect()
+                            });
+
+                        let masks = props
+                            .get("collision_masks")
+                            .and_then(|cm| cm.parse::<u32>().ok())
+                            .map_or_else(Vec::new, |cm| {
+                                decode_flags(cm)
+                                    .iter()
+                                    .map(|flag| L::from_flag(*flag))
+                                    .collect()
+                            });
+
                         let mut collider =
                             gchildren.spawn((convex_hull, TransformBundle::default()));
+
+                        if !layers.is_empty() || !masks.is_empty() {
+                            collider.insert(CollisionLayers::new(layers, masks));
+                        }
+
                         collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
                     }
                 }

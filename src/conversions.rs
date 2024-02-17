@@ -47,3 +47,17 @@ pub fn uvs_to_bevy_vec2s(uvs: &Vec<Vector2>) -> Vec<Vec2> {
     }
     bevy_uvs
 }
+
+/// Decodes the set flags from an integer value.
+///
+/// The function returns a Vec<usize> containing the positions (1-indexed) of the flags that are set.
+/// For example, if the first and second flags are set, it would return vec![1, 2].
+pub fn decode_flags(value: u32) -> Vec<u32> {
+    let mut flags = Vec::new();
+    for i in 0..32 {
+        if value & (1 << i) != 0 {
+            flags.push(i);
+        }
+    }
+    flags
+}

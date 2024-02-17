@@ -4,7 +4,9 @@ use bevy::asset::{AssetLoader, BoxedFuture, Handle, LoadContext};
 use bevy::ecs::system::SystemId;
 use bevy::prelude::*;
 use bevy::reflect::TypePath;
+use bevy_xpbd_3d::components::PhysicsLayer;
 use std::collections::BTreeMap;
+use std::fmt::Debug;
 use thiserror::Error;
 
 mod build;
@@ -77,6 +79,11 @@ impl AssetLoader for MapAssetLoader {
     }
 }
 
+pub trait CustomPhysicsLayer: PhysicsLayer + std::marker::Sync + std::marker::Send + Debug + 'static {
+    /// "flag" represents the position of the layer in the bitfield, 0-indexed.
+    fn from_flag(flag: u32) -> Self;
+}
+
 #[derive(Event)]
 pub struct PostBuildMapEvent {
     pub map: Entity,
@@ -87,13 +94,24 @@ pub struct PostMapBuildHook {
     pub system: Option<SystemId>,
 }
 
-pub struct MapAssetLoaderPlugin;
-impl Plugin for MapAssetLoaderPlugin {
+pub struct MapAssetLoaderPlugin<L: CustomPhysicsLayer> {
+    _marker: std::marker::PhantomData<L>,
+}
+
+impl<L: CustomPhysicsLayer> Default for MapAssetLoaderPlugin<L>{
+    fn default() -> Self {
+        Self {
+            _marker: std::marker::PhantomData,
+        }
+    }
+}
+
+impl<L: CustomPhysicsLayer> Plugin for MapAssetLoaderPlugin<L> {
     fn build(&self, app: &mut App) {
         app.init_asset::<MapAsset>()
             .init_resource::<PostMapBuildHook>()
             .init_asset_loader::<MapAssetLoader>()
             .add_event::<PostBuildMapEvent>()
-            .add_systems(PreUpdate, load::handle_loaded_map_system);
+            .add_systems(PreUpdate, load::handle_loaded_map_system::<L>);
     }
 }
