@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy::render::mesh::Indices;
+use bevy::render::render_asset::RenderAssetUsages;
 use bevy::render::render_resource::PrimitiveTopology;
 use bevy_xpbd_3d::components::CollisionLayers;
 
@@ -163,10 +164,13 @@ pub fn build_map<L: CustomPhysicsLayer>(
                             continue;
                         }
 
-                        let mut mesh = Mesh::new(PrimitiveTopology::TriangleList);
+                        let mut mesh = Mesh::new(
+                            PrimitiveTopology::TriangleList,
+                            RenderAssetUsages::RENDER_WORLD,
+                        );
                         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
                         mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
-                        mesh.set_indices(Some(Indices::U32(indices)));
+                        mesh.insert_indices(Indices::U32(indices));
 
                         if uvs.len() > 0 {
                             mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
@@ -195,34 +199,17 @@ pub fn build_map<L: CustomPhysicsLayer>(
                         let layers = props
                             .get("collision_layers")
                             .and_then(|cl| cl.parse::<u32>().ok())
-                            .map_or_else(Vec::new, |cl| {
-                                decode_flags(cl)
-                                    .iter()
-                                    .map(|flag| L::from_flag(*flag))
-                                    .collect()
-                            });
+                            .unwrap_or_else(|| *L::get_default_layers().into());
 
                         let masks = props
                             .get("collision_masks")
                             .and_then(|cm| cm.parse::<u32>().ok())
-                            .map_or_else(Vec::new, |cm| {
-                                decode_flags(cm)
-                                    .iter()
-                                    .map(|flag| L::from_flag(*flag))
-                                    .collect()
-                            });
+                            .unwrap_or_else(|| *L::get_default_masks().into());
 
                         let mut collider =
                             gchildren.spawn((convex_hull, TransformBundle::default()));
 
-                        if !layers.is_empty() || !masks.is_empty() {
-                            collider.insert(CollisionLayers::new(layers, masks));
-                        } else {
-                            collider.insert(CollisionLayers::new(
-                                L::get_default_layers(),
-                                L::get_default_masks(),
-                            ));
-                        }
+                        collider.insert(CollisionLayers::new(layers, masks));
 
                         collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
                     }
@@ -233,12 +220,3 @@ pub fn build_map<L: CustomPhysicsLayer>(
 
     ev_post_build_map.send(PostBuildMapEvent { map: map_entity });
 }
-
-// pub fn cleanup_spawned_entities_system(
-//     mut commands: Commands,
-//     q_spawning_entities: Query<Entity, With<MapEntityProperties>>,
-// ) {
-//     for entity in q_spawning_entities.iter() {
-//         commands.entity(entity).remove::<MapEntityProperties>();
-//     }
-// }

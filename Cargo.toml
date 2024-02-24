@@ -13,7 +13,7 @@ authors = ["Brian Howard <brian.howard@hey.com>"]
 [dependencies]
 anyhow = "1.0.75"
 async-lock = "3.0.0"
-bevy = "0.12"
+bevy = "0.13"
 regex = "1.10.2"
 ron = "0.8.1"
 thiserror = "1.0.50"
@@ -21,9 +21,11 @@ usage = "1.4.0"
 
 shalrath = "0.2.5"
 shambler = { git = "https://github.com/BrianWiz/shambler.git" }
-bevy_xpbd_3d = { git = "https://github.com/Jondolf/bevy_xpbd", rev = "7a97c56dfb12cc9cf5c702d542b0b7d5866b4189" }
+bevy_xpbd_3d = { git = "https://github.com/Jondolf/bevy_xpbd", branch = "main", features = [
+    "parry-f32",
+] }
 
-bevy-inspector-egui = "0.22"
+bevy-inspector-egui = "0.23"
 
 [[example]]
 name = "first_person"

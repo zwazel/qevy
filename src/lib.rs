@@ -4,7 +4,7 @@ use bevy::asset::{AssetLoader, BoxedFuture, Handle, LoadContext};
 use bevy::ecs::system::SystemId;
 use bevy::prelude::*;
 use bevy::reflect::TypePath;
-use bevy_xpbd_3d::components::PhysicsLayer;
+use bevy_xpbd_3d::components::{LayerMask, PhysicsLayer};
 use std::collections::BTreeMap;
 use std::fmt::Debug;
 use thiserror::Error;
@@ -85,12 +85,12 @@ pub trait CustomPhysicsLayer:
     /// "flag" represents the position of the layer in the bitfield, 0-indexed.
     fn from_flag(flag: u32) -> Self;
 
-    fn get_default_masks() -> Vec<Self> {
-        vec![Self::default()]
+    fn get_default_masks() -> impl Into<LayerMask> {
+        Self::default()
     }
 
-    fn get_default_layers() -> Vec<Self> {
-        vec![Self::default()]
+    fn get_default_layers() -> impl Into<LayerMask> {
+        Self::default()
     }
 }
 

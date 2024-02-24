@@ -3,7 +3,7 @@ use bevy::window::PrimaryWindow;
 use bevy::{input::mouse::MouseMotion, window::CursorGrabMode};
 use bevy_xpbd_3d::prelude::*;
 
-use qevy::PostBuildMapEvent;
+use qevy::{CustomPhysicsLayer, PostBuildMapEvent};
 
 const MOVE_SPEED: f32 = 2.0;
 const MOUSE_SENSITIVITY: f32 = 0.1;
@@ -17,11 +17,39 @@ struct Rotation(Quat);
 #[derive(Component)]
 pub struct SpawnPoint;
 
+#[derive(PhysicsLayer, Reflect, Default, Debug)]
+enum Layer {
+    #[default]
+    Ground,
+    WallRunnable,
+    Player,
+    Unknown,
+}
+
+impl CustomPhysicsLayer for Layer {
+    fn from_flag(flag: u32) -> Self {
+        match flag {
+            0 => Layer::Ground,
+            1 => Layer::WallRunnable,
+            2 => Layer::Player,
+            _ => Layer::Unknown,
+        }
+    }
+
+    fn get_default_masks() -> impl Into<LayerMask> {
+        [Self::Ground, Self::WallRunnable]
+    }
+
+    fn get_default_layers() -> impl Into<LayerMask> {
+        [Self::Ground, Self::WallRunnable]
+    }
+}
+
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
-            qevy::MapAssetLoaderPlugin,
+            qevy::MapAssetLoaderPlugin::<Layer>::default(),
             PhysicsPlugins::default(), // XPBD
                                        //PhysicsDebugPlugin::default(),
         ))
@@ -127,7 +155,7 @@ fn spawn_character(mut commands: Commands, mut q_windows: Query<&mut Window, Wit
         RigidBody::Dynamic,
         GravityScale(0.0),
         Rotation(Quat::IDENTITY),
-        Collider::ball(0.5),
+        Collider::sphere(0.5),
         TransformBundle {
             local: Transform::from_xyz(0.0, 5.0, 0.0),
             ..default()
@@ -143,7 +171,7 @@ fn spawn_character(mut commands: Commands, mut q_windows: Query<&mut Window, Wit
 
 fn movement(
     time: Res<Time>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut mouse_motion: EventReader<MouseMotion>,
     mut cameras: Query<&mut Transform, (With<Camera3d>, Without<Character>)>,
     mut characters: Query<(&Transform, &mut LinearVelocity, &mut Rotation), With<Character>>,
@@ -151,22 +179,23 @@ fn movement(
     for (collider_transform, mut linear_velocity, mut rotation) in &mut characters {
         for mut camera_transform in &mut cameras {
             // Directional movement
-            if keyboard_input.pressed(KeyCode::W) || keyboard_input.pressed(KeyCode::Up) {
+            if keyboard_input.pressed(KeyCode::KeyW) || keyboard_input.pressed(KeyCode::ArrowUp) {
                 linear_velocity.0 -= rotation.0 * MOVE_SPEED * Vec3::Z;
             }
-            if keyboard_input.pressed(KeyCode::S) || keyboard_input.pressed(KeyCode::Down) {
+            if keyboard_input.pressed(KeyCode::KeyS) || keyboard_input.pressed(KeyCode::ArrowDown) {
                 linear_velocity.0 += rotation.0 * MOVE_SPEED * Vec3::Z;
             }
-            if keyboard_input.pressed(KeyCode::A) || keyboard_input.pressed(KeyCode::Left) {
+            if keyboard_input.pressed(KeyCode::KeyA) || keyboard_input.pressed(KeyCode::ArrowLeft) {
                 linear_velocity.0 -= rotation.0 * MOVE_SPEED * Vec3::X;
             }
-            if keyboard_input.pressed(KeyCode::D) || keyboard_input.pressed(KeyCode::Right) {
+            if keyboard_input.pressed(KeyCode::KeyD) || keyboard_input.pressed(KeyCode::ArrowRight)
+            {
                 linear_velocity.0 += rotation.0 * MOVE_SPEED * Vec3::X;
             }
-            if keyboard_input.pressed(KeyCode::Q) || keyboard_input.pressed(KeyCode::Space) {
+            if keyboard_input.pressed(KeyCode::KeyQ) || keyboard_input.pressed(KeyCode::Space) {
                 linear_velocity.y += MOVE_SPEED;
             }
-            if keyboard_input.pressed(KeyCode::X) || keyboard_input.pressed(KeyCode::ShiftLeft) {
+            if keyboard_input.pressed(KeyCode::KeyX) || keyboard_input.pressed(KeyCode::ShiftLeft) {
                 linear_velocity.y -= MOVE_SPEED;
             }
 
@@ -195,8 +224,8 @@ fn movement(
 
 fn grab_mouse(
     mut windows: Query<&mut Window>,
-    mouse: Res<Input<MouseButton>>,
-    key: Res<Input<KeyCode>>,
+    mouse: Res<ButtonInput<MouseButton>>,
+    key: Res<ButtonInput<KeyCode>>,
 ) {
     let mut window = windows.single_mut();
 
