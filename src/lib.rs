@@ -79,9 +79,19 @@ impl AssetLoader for MapAssetLoader {
     }
 }
 
-pub trait CustomPhysicsLayer: PhysicsLayer + std::marker::Sync + std::marker::Send + Debug + 'static {
+pub trait CustomPhysicsLayer:
+    PhysicsLayer + Default + std::marker::Sync + std::marker::Send + Debug + 'static
+{
     /// "flag" represents the position of the layer in the bitfield, 0-indexed.
     fn from_flag(flag: u32) -> Self;
+
+    fn get_default_masks() -> Vec<Self> {
+        vec![Self::default()]
+    }
+
+    fn get_default_layers() -> Vec<Self> {
+        vec![Self::default()]
+    }
 }
 
 #[derive(Event)]
@@ -98,7 +108,7 @@ pub struct MapAssetLoaderPlugin<L: CustomPhysicsLayer> {
     _marker: std::marker::PhantomData<L>,
 }
 
-impl<L: CustomPhysicsLayer> Default for MapAssetLoaderPlugin<L>{
+impl<L: CustomPhysicsLayer> Default for MapAssetLoaderPlugin<L> {
     fn default() -> Self {
         Self {
             _marker: std::marker::PhantomData,

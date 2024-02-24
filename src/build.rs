@@ -217,6 +217,11 @@ pub fn build_map<L: CustomPhysicsLayer>(
 
                         if !layers.is_empty() || !masks.is_empty() {
                             collider.insert(CollisionLayers::new(layers, masks));
+                        } else {
+                            collider.insert(CollisionLayers::new(
+                                L::get_default_layers(),
+                                L::get_default_masks(),
+                            ));
                         }
 
                         collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
