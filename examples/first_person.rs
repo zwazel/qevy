@@ -36,11 +36,11 @@ impl CustomPhysicsLayer for Layer {
         }
     }
 
-    fn get_default_masks() -> impl Into<LayerMask> {
+    fn get_default_filters() -> impl Into<LayerMask> {
         [Self::Ground, Self::WallRunnable]
     }
 
-    fn get_default_layers() -> impl Into<LayerMask> {
+    fn get_default_memberships() -> impl Into<LayerMask> {
         [Self::Ground, Self::WallRunnable]
     }
 }

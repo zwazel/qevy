@@ -85,11 +85,11 @@ pub trait CustomPhysicsLayer:
     /// "flag" represents the position of the layer in the bitfield, 0-indexed.
     fn from_flag(flag: u32) -> Self;
 
-    fn get_default_masks() -> impl Into<LayerMask> {
+    fn get_default_filters() -> impl Into<LayerMask> {
         Self::default()
     }
 
-    fn get_default_layers() -> impl Into<LayerMask> {
+    fn get_default_memberships() -> impl Into<LayerMask> {
         Self::default()
     }
 }

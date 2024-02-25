@@ -196,20 +196,20 @@ pub fn build_map<L: CustomPhysicsLayer>(
                     if let Some(convex_hull) =
                         bevy_xpbd_3d::prelude::Collider::convex_hull(brush_vertices)
                     {
-                        let layers = props
+                        let membership = props
                             .get("collision_layers")
                             .and_then(|cl| cl.parse::<u32>().ok())
-                            .unwrap_or_else(|| *L::get_default_layers().into());
+                            .unwrap_or_else(|| *L::get_default_memberships().into());
 
-                        let masks = props
+                        let filters = props
                             .get("collision_masks")
                             .and_then(|cm| cm.parse::<u32>().ok())
-                            .unwrap_or_else(|| *L::get_default_masks().into());
+                            .unwrap_or_else(|| *L::get_default_filters().into());
 
                         let mut collider =
                             gchildren.spawn((convex_hull, TransformBundle::default()));
 
-                        collider.insert(CollisionLayers::new(layers, masks));
+                        collider.insert(CollisionLayers::new(membership, filters));
 
                         collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
                     }
