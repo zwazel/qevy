@@ -4,8 +4,6 @@
 {
 "classname" "worldspawn"
 "_tb_textures" "textures"
-"collision_layers" "3"
-"collision_masks" "3"
 // brush 0
 {
 ( 256 256 16 ) ( 256 -256 16 ) ( 256 -256 -64 ) blue_tiles 0 0 0 1 1

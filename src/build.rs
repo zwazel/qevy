@@ -197,12 +197,12 @@ pub fn build_map<L: CustomPhysicsLayer>(
                         bevy_xpbd_3d::prelude::Collider::convex_hull(brush_vertices)
                     {
                         let membership = props
-                            .get("collision_layers")
+                            .get("collision_memberships")
                             .and_then(|cl| cl.parse::<u32>().ok())
                             .unwrap_or_else(|| *L::get_default_memberships().into());
 
                         let filters = props
-                            .get("collision_masks")
+                            .get("collision_filters")
                             .and_then(|cm| cm.parse::<u32>().ok())
                             .unwrap_or_else(|| *L::get_default_filters().into());
 

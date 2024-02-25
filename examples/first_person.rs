@@ -149,6 +149,16 @@ fn spawn_character(mut commands: Commands, mut q_windows: Query<&mut Window, Wit
         ..default()
     });
 
+    let memberships = Layer::Player;
+    let filters = [Layer::Ground, Layer::WallRunnable];
+    let filters_in_bits = filters
+        .map(|layer| layer as u32)
+        .iter()
+        .fold(0, |acc, layer| acc | (1 << *layer as u32));
+
+    println!("memberships: {:?}", memberships.to_bits());
+    println!("filters: {:?}", filters_in_bits);
+
     // spawn the character
     commands.spawn((
         Character,
@@ -156,6 +166,7 @@ fn spawn_character(mut commands: Commands, mut q_windows: Query<&mut Window, Wit
         GravityScale(0.0),
         Rotation(Quat::IDENTITY),
         Collider::sphere(0.5),
+        CollisionLayers::new(memberships, filters_in_bits),
         TransformBundle {
             local: Transform::from_xyz(0.0, 5.0, 0.0),
             ..default()
