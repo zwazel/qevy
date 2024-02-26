@@ -3,6 +3,7 @@ use bevy::render::mesh::Indices;
 use bevy::render::render_asset::RenderAssetUsages;
 use bevy::render::render_resource::PrimitiveTopology;
 use bevy_xpbd_3d::components::CollisionLayers;
+use oxidized_navigation::NavMeshAffector;
 
 use std::collections::BTreeMap;
 
@@ -209,9 +210,11 @@ pub fn build_map<L: CustomPhysicsLayer>(
                         let mut collider =
                             gchildren.spawn((convex_hull, TransformBundle::default()));
 
-                        collider.insert(CollisionLayers::new(membership, filters));
-
-                        collider.insert((bevy_xpbd_3d::prelude::RigidBody::Static,));
+                        collider.insert((
+                            bevy_xpbd_3d::prelude::RigidBody::Static,
+                            CollisionLayers::new(membership, filters),
+                            NavMeshAffector,
+                        ));
                     }
                 }
             });
