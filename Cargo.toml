@@ -28,3 +28,4 @@ bevy-inspector-egui = "0.23"
 
 [[example]]
 name = "first_person"
+path = "examples/first_person.rs"
