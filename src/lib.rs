@@ -1,6 +1,6 @@
 use bevy::asset::io::Reader;
 use bevy::asset::AsyncReadExt;
-use bevy::asset::{AssetLoader, BoxedFuture, Handle, LoadContext};
+use bevy::asset::{AssetLoader, BoxedFuture, LoadContext};
 use bevy::ecs::system::SystemId;
 use bevy::prelude::*;
 use bevy::reflect::TypePath;
