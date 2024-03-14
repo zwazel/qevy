@@ -13,7 +13,10 @@ authors = ["Brian Howard <brian.howard@hey.com>"]
 [dependencies]
 anyhow = "1.0.75"
 async-lock = "3.0.0"
-bevy = "0.13"
+bevy = { version = "0.13", default-features = false, features = [
+    "bevy_asset",
+    "file_watcher",
+] }
 regex = "1.10.2"
 ron = "0.8.1"
 thiserror = "1.0.50"
@@ -23,9 +26,10 @@ shalrath = "0.2.5"
 shambler = { git = "https://github.com/BrianWiz/shambler.git" }
 bevy_xpbd_3d = { version = "0.4" }
 oxidized_navigation = { version = "0.10", features = ["xpbd", "debug_draw"] }
-
 bevy-inspector-egui = "0.23"
+
+[dev-dependencies]
+bevy = { version = "0.13", features = ["file_watcher"] }
 
 [[example]]
 name = "first_person"
-path = "examples/first_person.rs"
