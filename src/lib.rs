@@ -13,6 +13,7 @@ mod build;
 pub mod components;
 pub mod conversions;
 mod load;
+pub mod auto_create_config;
 
 #[derive(Debug, Asset, TypePath)]
 pub struct MapAsset {

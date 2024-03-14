@@ -33,3 +33,8 @@ bevy = { version = "0.13", features = ["file_watcher"] }
 
 [[example]]
 name = "first_person"
+path = "examples/first_person.rs"
+
+[[example]]
+name = "exporting_config"
+path = "examples/exporting_config.rs"
