@@ -1,10 +1,9 @@
-use std::{fs::File, path::Path};
+use std::{fs::File, io::Write, path::Path};
 
-use bevy::{prelude::*, reflect::TypeRegistration};
+use bevy::prelude::*;
 
 use super::{
-    register_types::{QevyEntityConfig, ReflectQevyEntityConfig},
-    AssetRoot, AutoCreateConfigSettings, QevyRegistry,
+    register_types::ReflectQevyEntityConfig, AssetRoot, AutoCreateConfigSettings, QevyRegistry,
 };
 
 pub(crate) fn create_config(world: &mut World) {
@@ -13,6 +12,9 @@ pub(crate) fn create_config(world: &mut World) {
     let asset_root = world.resource::<AssetRoot>();
     let types = world.resource::<AppTypeRegistry>();
     let types = types.read();
+
+    let registry_save_path = Path::join(&asset_root.0, &config.save_path);
+    let mut writer = File::create(registry_save_path).expect("could not create file");
 
     let config_type_registrations: Vec<_> = qevy_registry
         .solid_classes
@@ -27,12 +29,11 @@ pub(crate) fn create_config(world: &mut World) {
             .data::<ReflectQevyEntityConfig>()
             .unwrap();
         let entity_config = reflect_entity_config.get(&*value).unwrap();
-        println!(
-            "exporting: {}",
-            entity_config.get_export_string(config_type_registration, &*types)
-        );
-    }
+        let config_string =
+            entity_config.get_export_string(config_type_registration, &*types) + "\n";
 
-    let registry_save_path = Path::join(&asset_root.0, &config.save_path);
-    let writer = File::create(registry_save_path).expect("could not create file");
+        writer
+            .write_all(config_string.as_bytes())
+            .expect("could not write to file");
+    }
 }
