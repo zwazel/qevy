@@ -1,9 +1,10 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::TypeRegistry};
 use bevy_xpbd_3d::{components::LayerMask, plugins::PhysicsPlugins, prelude::PhysicsLayer};
 use qevy::{
     auto_create_config::register_types::{
+        base_classes::{QevyBaseClass, QevyRegisterBaseClass},
         solid_classes::{QevyRegisterSolidClass, QevySolidClass},
-        QevyEntityConfig, ReflectQevyEntityConfig,
+        QevyEntityConfig, QevyEntityType, ReflectQevyEntityConfig,
     },
     CustomPhysicsLayer,
 };
@@ -17,6 +18,7 @@ fn main() {
             qevy::auto_create_config::AutoCreateConfigPlugin::default(),
         ))
         .register_solid_class::<TestSolidClass>()
+        .register_base_class::<TestBaseClass>()
         .run();
 }
 
@@ -25,12 +27,22 @@ fn main() {
 struct TestSolidClass;
 
 impl QevyEntityConfig for TestSolidClass {
-    fn get_export_string(&self) -> &str {
-        "TestSolidClass"
+    fn get_entity_type(&self) -> &QevyEntityType {
+        &QevyEntityType::Solid
+    }
+
+    fn get_base_classes(&self) -> Vec<std::any::TypeId> {
+        vec![std::any::TypeId::of::<TestBaseClass>()]
     }
 }
 
 impl QevySolidClass for TestSolidClass {}
+
+#[derive(Component, Reflect, Default)]
+#[reflect(Component, Default)]
+struct TestBaseClass;
+
+impl QevyBaseClass for TestBaseClass {}
 
 #[derive(PhysicsLayer, Reflect, Default, Debug)]
 enum Layer {
