@@ -6,15 +6,13 @@ use crate::auto_create_config::QevyRegistry;
 
 use super::QevyEntityConfig;
 
-pub trait QevyEntityClass: QevyEntityConfig {}
-
 pub trait QevyRegisterSolidClass {
-    fn register_qevy_entity<T: QevyEntityClass + GetTypeRegistration + Any>(&mut self)
+    fn register_qevy_entity<T: QevyEntityConfig + GetTypeRegistration + Any>(&mut self)
         -> &mut Self;
 }
 
 impl QevyRegisterSolidClass for App {
-    fn register_qevy_entity<T: QevyEntityClass + GetTypeRegistration + Any>(
+    fn register_qevy_entity<T: QevyEntityConfig + GetTypeRegistration + Any>(
         &mut self,
     ) -> &mut Self {
         let registry = self.world.resource_mut::<AppTypeRegistry>();

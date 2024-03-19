@@ -2,9 +2,8 @@ use bevy::prelude::*;
 use bevy_xpbd_3d::{components::LayerMask, plugins::PhysicsPlugins, prelude::PhysicsLayer};
 use qevy::{
     auto_create_config::register_types::{
-        base_classes::{QevyBaseClass, QevyRegisterBaseClass},
-        entities::{QevyEntityClass, QevyRegisterSolidClass},
-        QevyEntityConfig, QevyEntityType, ReflectQevyEntityConfig,
+        base_classes::QevyRegisterBaseClass, entities::QevyRegisterSolidClass, QevyEntityConfig,
+        QevyEntityType, ReflectQevyEntityConfig,
     },
     CustomPhysicsLayer,
 };
@@ -38,8 +37,6 @@ impl QevyEntityConfig for AnotherSolidClass {
     }
 }
 
-impl QevyEntityClass for AnotherSolidClass {}
-
 #[derive(Component, Reflect, Default)]
 #[reflect(Component, QevyEntityConfig, Default)]
 struct APointClass;
@@ -54,8 +51,6 @@ impl QevyEntityConfig for APointClass {
     }
 }
 
-impl QevyEntityClass for APointClass {}
-
 #[derive(Component, Reflect, Default)]
 #[reflect(Component, QevyEntityConfig, Default)]
 struct TestSolidClass;
@@ -66,13 +61,15 @@ impl QevyEntityConfig for TestSolidClass {
     }
 }
 
-impl QevyEntityClass for TestSolidClass {}
-
 #[derive(Component, Reflect, Default)]
-#[reflect(Component, Default)]
+#[reflect(Component, QevyEntityConfig, Default)]
 struct TestBaseClass;
 
-impl QevyBaseClass for TestBaseClass {}
+impl QevyEntityConfig for TestBaseClass {
+    fn get_entity_type(&self) -> &QevyEntityType {
+        &QevyEntityType::Base
+    }
+}
 
 #[derive(PhysicsLayer, Reflect, Default, Debug)]
 enum Layer {

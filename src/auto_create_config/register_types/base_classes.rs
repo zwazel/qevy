@@ -4,16 +4,16 @@ use bevy::{prelude::*, reflect::GetTypeRegistration};
 
 use crate::auto_create_config::QevyRegistry;
 
-pub trait QevyBaseClass {}
+use super::QevyEntityConfig;
 
 pub trait QevyRegisterBaseClass {
-    fn register_qevy_base_class<T: QevyBaseClass + GetTypeRegistration + Any>(
+    fn register_qevy_base_class<T: QevyEntityConfig + GetTypeRegistration + Any>(
         &mut self,
     ) -> &mut Self;
 }
 
 impl QevyRegisterBaseClass for App {
-    fn register_qevy_base_class<T: QevyBaseClass + GetTypeRegistration + Any>(
+    fn register_qevy_base_class<T: QevyEntityConfig + GetTypeRegistration + Any>(
         &mut self,
     ) -> &mut Self {
         let registry = self.world.resource_mut::<AppTypeRegistry>();
