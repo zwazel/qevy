@@ -1,21 +1,14 @@
-use std::any::{Any, TypeId};
+use std::any::TypeId;
 
-use bevy::{prelude::*, reflect::GetTypeRegistration};
+use bevy::reflect::reflect_trait;
 
-use super::QevyRegistry;
+pub mod solid_classes;
 
-pub trait QevyRegisterSolidClass {
-    fn register_solid_class<T: GetTypeRegistration + Any>(&mut self) -> &mut Self;
-}
-
-impl QevyRegisterSolidClass for App {
-    fn register_solid_class<T: GetTypeRegistration + Any>(&mut self) -> &mut Self {
-        let registry = self.world.resource_mut::<AppTypeRegistry>();
-        registry.write().register::<T>();
-
-        let mut registry = self.world.resource_mut::<QevyRegistry>();
-        registry.solid_classes.push(TypeId::of::<T>());
-
-        self
+#[reflect_trait]
+pub trait QevyEntityConfig {
+    fn get_base_classes(&self) -> Vec<TypeId> {
+        vec![]
     }
+
+    fn get_export_string(&self) -> &str;
 }

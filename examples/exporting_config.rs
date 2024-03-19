@@ -1,6 +1,12 @@
 use bevy::prelude::*;
 use bevy_xpbd_3d::{components::LayerMask, plugins::PhysicsPlugins, prelude::PhysicsLayer};
-use qevy::{auto_create_config::register_types::QevyRegisterSolidClass, CustomPhysicsLayer};
+use qevy::{
+    auto_create_config::register_types::{
+        solid_classes::{QevyRegisterSolidClass, QevySolidClass},
+        QevyEntityConfig, ReflectQevyEntityConfig,
+    },
+    CustomPhysicsLayer,
+};
 
 fn main() {
     App::new()
@@ -15,8 +21,16 @@ fn main() {
 }
 
 #[derive(Component, Reflect, Default)]
-#[reflect(Component)]
+#[reflect(Component, QevyEntityConfig, Default)]
 struct TestSolidClass;
+
+impl QevyEntityConfig for TestSolidClass {
+    fn get_export_string(&self) -> &str {
+        "TestSolidClass"
+    }
+}
+
+impl QevySolidClass for TestSolidClass {}
 
 #[derive(PhysicsLayer, Reflect, Default, Debug)]
 enum Layer {
