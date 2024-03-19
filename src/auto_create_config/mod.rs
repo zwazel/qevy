@@ -1,9 +1,15 @@
-use std::path::PathBuf;
+use std::{any::TypeId, path::PathBuf};
 
 use bevy::prelude::*;
 
 use self::export::create_config;
 mod export;
+pub mod register_types;
+
+#[derive(Resource, Clone, Default)]
+pub(crate) struct QevyRegistry {
+    pub(crate) solid_classes: Vec<TypeId>,
+}
 
 #[derive(Resource, Reflect, Clone)]
 #[reflect(Resource)]

@@ -1,3 +1,4 @@
+use auto_create_config::QevyRegistry;
 use bevy::asset::io::Reader;
 use bevy::asset::AsyncReadExt;
 use bevy::asset::{AssetLoader, BoxedFuture, LoadContext};
@@ -121,6 +122,7 @@ impl<L: CustomPhysicsLayer> Plugin for MapAssetLoaderPlugin<L> {
     fn build(&self, app: &mut App) {
         app.init_asset::<MapAsset>()
             .init_resource::<PostMapBuildHook>()
+            .init_resource::<QevyRegistry>()
             .init_asset_loader::<MapAssetLoader>()
             .add_event::<PostBuildMapEvent>()
             .add_systems(PreUpdate, load::handle_loaded_map_system::<L>);
