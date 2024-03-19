@@ -7,11 +7,15 @@ use crate::auto_create_config::QevyRegistry;
 pub trait QevyBaseClass {}
 
 pub trait QevyRegisterBaseClass {
-    fn register_base_class<T: QevyBaseClass + GetTypeRegistration + Any>(&mut self) -> &mut Self;
+    fn register_qevy_base_class<T: QevyBaseClass + GetTypeRegistration + Any>(
+        &mut self,
+    ) -> &mut Self;
 }
 
 impl QevyRegisterBaseClass for App {
-    fn register_base_class<T: QevyBaseClass + GetTypeRegistration + Any>(&mut self) -> &mut Self {
+    fn register_qevy_base_class<T: QevyBaseClass + GetTypeRegistration + Any>(
+        &mut self,
+    ) -> &mut Self {
         let registry = self.world.resource_mut::<AppTypeRegistry>();
         registry.write().register::<T>();
 

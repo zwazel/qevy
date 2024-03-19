@@ -3,7 +3,7 @@ use bevy_xpbd_3d::{components::LayerMask, plugins::PhysicsPlugins, prelude::Phys
 use qevy::{
     auto_create_config::register_types::{
         base_classes::{QevyBaseClass, QevyRegisterBaseClass},
-        solid_classes::{QevyRegisterSolidClass, QevySolidClass},
+        entities::{QevyEntityClass, QevyRegisterSolidClass},
         QevyEntityConfig, QevyEntityType, ReflectQevyEntityConfig,
     },
     CustomPhysicsLayer,
@@ -17,9 +17,10 @@ fn main() {
             PhysicsPlugins::default(),
             qevy::auto_create_config::AutoCreateConfigPlugin::default(),
         ))
-        .register_solid_class::<AnotherSolidClass>()
-        .register_solid_class::<TestSolidClass>()
-        .register_base_class::<TestBaseClass>()
+        .register_qevy_entity::<AnotherSolidClass>()
+        .register_qevy_entity::<TestSolidClass>()
+        .register_qevy_entity::<APointClass>()
+        .register_qevy_base_class::<TestBaseClass>()
         .run();
 }
 
@@ -37,7 +38,23 @@ impl QevyEntityConfig for AnotherSolidClass {
     }
 }
 
-impl QevySolidClass for AnotherSolidClass {}
+impl QevyEntityClass for AnotherSolidClass {}
+
+#[derive(Component, Reflect, Default)]
+#[reflect(Component, QevyEntityConfig, Default)]
+struct APointClass;
+
+impl QevyEntityConfig for APointClass {
+    fn get_entity_type(&self) -> &QevyEntityType {
+        &QevyEntityType::Point
+    }
+
+    fn get_base_classes(&self) -> Vec<std::any::TypeId> {
+        vec![std::any::TypeId::of::<TestBaseClass>()]
+    }
+}
+
+impl QevyEntityClass for APointClass {}
 
 #[derive(Component, Reflect, Default)]
 #[reflect(Component, QevyEntityConfig, Default)]
@@ -49,7 +66,7 @@ impl QevyEntityConfig for TestSolidClass {
     }
 }
 
-impl QevySolidClass for TestSolidClass {}
+impl QevyEntityClass for TestSolidClass {}
 
 #[derive(Component, Reflect, Default)]
 #[reflect(Component, Default)]

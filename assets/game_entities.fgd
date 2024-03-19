@@ -1,2 +1,3 @@
 @SolidClass base(TestBaseClass) = AnotherSolidClass : ""
 @SolidClass base() = TestSolidClass : ""
+@PointClass base(TestBaseClass) = APointClass : ""

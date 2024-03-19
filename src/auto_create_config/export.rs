@@ -17,7 +17,7 @@ pub(crate) fn create_config(world: &mut World) {
     let mut writer = File::create(registry_save_path).expect("could not create file");
 
     let config_type_registrations: Vec<_> = qevy_registry
-        .solid_classes
+        .qevy_entities
         .iter()
         .filter_map(|solid_class_type| types.get(*solid_class_type))
         .collect();

@@ -3,7 +3,7 @@ use std::any::TypeId;
 use bevy::reflect::{reflect_trait, TypeRegistration, TypeRegistry};
 
 pub mod base_classes;
-pub mod solid_classes;
+pub mod entities;
 
 pub enum QevyEntityType {
     Solid,
