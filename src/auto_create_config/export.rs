@@ -26,7 +26,8 @@ pub(crate) fn create_config(world: &mut World) {
         let reflect_default = config_type_registration.data::<ReflectDefault>().unwrap();
         let value: Box<dyn Reflect> = reflect_default.default();
         let reflect_entity_config = config_type_registration.data::<ReflectQevyEntityConfig>().unwrap();
-        let entity_config = reflect_entity_config.get(&value).unwrap();
+        let entity_config = reflect_entity_config.get(&*value).unwrap();
+        println!("exporting: {}", entity_config.get_export_string());
     }
 
     let registry_save_path = Path::join(&asset_root.0, &config.save_path);
