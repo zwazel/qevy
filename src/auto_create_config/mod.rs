@@ -49,6 +49,7 @@ impl AutoCreateConfigPlugin {
 impl Plugin for AutoCreateConfigPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<AutoCreateConfigSettings>()
+            .init_resource::<QevyRegistry>()
             .register_asset_root()
             .insert_resource(self.settings.clone())
             .add_systems(Startup, create_config);

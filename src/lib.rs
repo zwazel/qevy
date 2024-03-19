@@ -1,4 +1,3 @@
-use auto_create_config::QevyRegistry;
 use bevy::asset::io::Reader;
 use bevy::asset::AsyncReadExt;
 use bevy::asset::{AssetLoader, BoxedFuture, LoadContext};
@@ -10,11 +9,11 @@ use std::collections::BTreeMap;
 use std::fmt::Debug;
 use thiserror::Error;
 
+pub mod auto_create_config;
 mod build;
 pub mod components;
 pub mod conversions;
 mod load;
-pub mod auto_create_config;
 
 #[derive(Debug, Asset, TypePath)]
 pub struct MapAsset {
@@ -122,7 +121,6 @@ impl<L: CustomPhysicsLayer> Plugin for MapAssetLoaderPlugin<L> {
     fn build(&self, app: &mut App) {
         app.init_asset::<MapAsset>()
             .init_resource::<PostMapBuildHook>()
-            .init_resource::<QevyRegistry>()
             .init_asset_loader::<MapAssetLoader>()
             .add_event::<PostBuildMapEvent>()
             .add_systems(PreUpdate, load::handle_loaded_map_system::<L>);
