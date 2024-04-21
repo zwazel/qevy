@@ -176,7 +176,7 @@ pub fn build_map<L: CustomPhysicsLayer>(
                         if uvs.len() > 0 {
                             mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
                             if let Err(e) = mesh.generate_tangents() {
-                                println!("error generating tangents: {:?}", e);
+                                error!("error generating tangents: {:?}", e);
                             }
                         }
 
